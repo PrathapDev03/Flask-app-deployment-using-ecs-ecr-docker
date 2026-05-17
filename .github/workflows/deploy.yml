@@ -1,0 +1,52 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECR_REPOSITORY: flask-app
+  ECS_SERVICE: flask-service
+  ECS_CLUSTER: flask-cluster
+  ECS_TASK_DEFINITION: flask-task
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build Docker Image
+      run: docker build -t flask-app .
+
+    - name: Tag Docker Image
+      run: |
+        docker tag flask-app:latest ACCOUNT-ID.dkr.ecr.ap-southeast-2.amazonaws.com/flask-app:latest
+
+    - name: Push Docker Image
+      run: |
+        docker push ACCOUNT-ID.dkr.ecr.ap-southeast-2.amazonaws.com/flask-app:latest
+
+    - name: Force ECS Deployment
+      run: |
+        aws ecs update-service \
+          --cluster flask-cluster \
+          --service flask-service \
+          --force-new-deployment
