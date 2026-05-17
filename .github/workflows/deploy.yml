@@ -49,4 +49,5 @@ jobs:
         aws ecs update-service \
           --cluster flask-cluster \
           --service flask-service \
-          --force-new-deployment
+          --force-new-deployment \
+          --region ap-southeast-2
