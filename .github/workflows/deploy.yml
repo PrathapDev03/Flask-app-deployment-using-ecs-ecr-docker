@@ -8,8 +8,8 @@ on:
 env:
   AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: flask-app
-  ECS_SERVICE: flask-service
-  ECS_CLUSTER: flask-cluster
+  ECS_SERVICE: arn:aws:ecs:ap-southeast-2:379113716280:service/flask-cluster/flask-task-service-7el9u68z
+  ECS_CLUSTER: arn:aws:ecs:ap-southeast-2:379113716280:cluster/flask-cluster
   ECS_TASK_DEFINITION: flask-task
 
 jobs:
